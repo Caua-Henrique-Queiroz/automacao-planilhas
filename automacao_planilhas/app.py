@@ -7,8 +7,13 @@ import os
 # compute base directory for assets
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# helper functions are kept in a separate module for clarity
-from .utils import preparar_excel
+import sys
+# garantir que a raiz do projeto esteja no path para imports absolutos funcionarem
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from automacao_planilhas.utils import preparar_excel
 
 favicon = Image.open(os.path.join(BASE_DIR, "assets", "image", "icon.png"))
 logo_consul = Image.open(os.path.join(BASE_DIR, "assets", "image", "logo_consulpam.png"))
@@ -30,7 +35,7 @@ with col_logo:
     st.image(favicon, width=80)
 
 try:
-    st.sidebar.image(logo_consul, caption="Instituto Consulpam", use_container_width=True)
+    st.sidebar.image(logo_consul, caption="Instituto Consulpam", use_container_width=False)
 except:
     st.sidebar.write("Logo Consulpam")
 
@@ -57,6 +62,11 @@ if arquivo_postado is not None:
         else:
             df = pd.read_excel(arquivo_postado) # por padrão o pandas lê os arquivos modernos assim
             st.success(f"Processando arquivo (.xlsx): {nome_arquivo}")
+
+        # Normalizar tipos de dados: converter colunas com tipos mistos para string
+        # Isso evita erros de conversão ao exibir e processar DataFrames
+        for col in df.columns:
+            df[col] = df[col].fillna('').astype(str)
 
         if "NASCIMENTO" in df.columns:
             # Converte a coluna para o formato de data (Datetime)
@@ -100,7 +110,7 @@ if arquivo_postado is not None:
         
         st.markdown("### Visualização dos Candidatos")
         # usado para ter uma melhor pesquisa com as info dentro dos cartôes
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, width='stretch')
         
         tab_idosos, = st.tabs(["Idosos"])
             
@@ -116,7 +126,7 @@ if arquivo_postado is not None:
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
                 
-                st.dataframe(df_idosos, use_container_width=True)
+                st.dataframe(df_idosos, width='stretch')
             
             else:
                 st.info("Nenhum candidato idoso encontrado.")
@@ -160,23 +170,23 @@ if arquivo_postado is not None:
         tab_geral, tab_negros, tab_pcd, tab_misto = st.tabs(["Todos", "Negros", "PCD", "Negros e PCD"])
 
         with tab_geral:
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width='stretch')
 
         with tab_negros:
             if not df_negros.empty:
-                st.dataframe(df_negros, use_container_width=True)
+                st.dataframe(df_negros, width='stretch')
             else:
                 st.warning("Nenhum candidato Negro encontrado.")
 
         with tab_pcd:
             if not df_pcd.empty:
-                st.dataframe(df_pcd, use_container_width=True)
+                st.dataframe(df_pcd, width='stretch')
             else:
                 st.warning("Nenhum candidato Pcd encontrado.")
 
         with tab_misto:
             if not df_misto.empty:
-                st.dataframe(df_misto, use_container_width=True)
+                st.dataframe(df_misto, width='stretch')
             else:
                 st.warning("Nenhum candidato que seja Negro e PCD encontrado.")
 
