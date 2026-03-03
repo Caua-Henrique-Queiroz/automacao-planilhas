@@ -2,15 +2,16 @@ import streamlit as st
 import pandas as pd
 import io 
 from PIL import Image 
+import os
 
-def preparar_excel(df):
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False, sheet_name='Lista')
-    return output.getvalue()
+# compute base directory for assets
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-favicon = Image.open("image/icon.png")
-logo_consul = Image.open("image/logo_consulpam.png")
+# helper functions are kept in a separate module for clarity
+from .utils import preparar_excel
+
+favicon = Image.open(os.path.join(BASE_DIR, "assets", "image", "icon.png"))
+logo_consul = Image.open(os.path.join(BASE_DIR, "assets", "image", "logo_consulpam.png"))
 
 # config. a página
 st.set_page_config(
