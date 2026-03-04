@@ -175,6 +175,7 @@ if arquivo_postado is not None:
         with tab_negros:
             if not df_negros.empty:
                 st.dataframe(df_negros, width='stretch')
+                
             else:
                 st.warning("Nenhum candidato Negro encontrado.")
 

@@ -184,13 +184,20 @@ def preparar_excel(df):
 
 ### Como Usar:
 ```python
-from automacao_planilhas.utils import preparar_excel
+from automacao_planilhas.utils import preparar_excel, download_button_from_df
 
+# gerar bytes para anexar manualmente a um botão de download:
 dados = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
 arquivo_bytes = preparar_excel(dados)
 # arquivo_bytes pode ser enviado como download
-```
 
+# ou utilizar o botão pronto (UI centralizada):
+download_button_from_df(
+    dados,
+    label="Baixar arquivo",
+    file_name="tabela.xlsx",
+)
+```
 ---
 
 ## 🚀 4. Como Rodar a Aplicação
@@ -268,6 +275,7 @@ streamlit run automacao_planilhas/app.py
 
 7. **Download**
    - Permite baixar lista de idosos em .xlsx
+   - toda a lógica de preparação e geração do botão foi movida para `utils.download_button_from_df`
 
 ---
 
@@ -276,6 +284,7 @@ streamlit run automacao_planilhas/app.py
 | Função | Arquivo | Linha | Propósito |
 |--------|---------|-------|-----------|
 | `preparar_excel()` | `utils.py` | 5-11 | Converte DataFrame para bytes Excel |
+| `download_button_from_df()` | `utils.py` | 17-38 | Cria botão Streamlit e chama `preparar_excel()` |
 | Setup da página | `app.py` | 20-27 | Configura título, layout, favicon |
 | Upload de arquivo | `app.py` | 42-48 | Interface de upload no sidebar |
 | Leitura do Excel | `app.py` | 54-62 | Detecta formato e lê arquivo |
